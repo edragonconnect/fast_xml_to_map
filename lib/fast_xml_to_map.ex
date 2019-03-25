@@ -5,8 +5,9 @@ defmodule FastXmlToMap do
 
   def naive_map(data) do
     pre_process = :fxml_stream.parse_element(data)
-    IO.inspect pre_process
-    xml_to_tuple(pre_process) |> tuple_xml_to_map
+    xml_to_tuple(pre_process) 
+    |> IO.inspect
+    |> tuple_xml_to_map
   end
 
   defp xml_to_tuple(pre_process) do
@@ -27,7 +28,6 @@ defmodule FastXmlToMap do
       xmlel() -> xml_to_tuple(child)
     end
   end
-
   defp xml_to_tuple_by_list(children) when is_list(children) do
     children 
     |> Enum.map(fn(child) ->
@@ -41,23 +41,25 @@ defmodule FastXmlToMap do
   defp tuple_xml_to_map({k, v}) do
     %{k => xml_list_tuple_to_map(v)}
   end
+  defp tuple_xml_to_map(an_bit) when is_binary(an_bit) do
+    an_bit
+  end
+  defp tuple_xml_to_map(an_list) when is_list(an_list) do
+    xml_list_tuple_to_map(an_list)
+  end
 
   defp xml_list_tuple_to_map([]) do
     %{}
   end
-
-  defp xml_list_tuple_to_map({k, v}) do
-    %{k => v}
-  end
-
   defp xml_list_tuple_to_map(data) when is_list(data) do
     data |> Enum.reduce(%{}, fn({k,v}, acc) ->
-      new_v = xml_list_tuple_to_map(v)
+      new_v = tuple_xml_to_map(v)
       case Map.get(acc, k) do
         nil -> Map.put(acc, k, new_v)
         old when is_list(old) -> Map.put(acc, k, Enum.reverse([new_v| old])) 
         old -> Map.put(acc, k, [old, new_v])
       end
-  end)
+    end)
   end
+
 end
