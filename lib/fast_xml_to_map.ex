@@ -6,7 +6,7 @@ defmodule FastXmlToMap do
   def naive_map(data) do
     pre_process = :fxml_stream.parse_element(data)
     xml_to_tuple(pre_process) 
-    |> IO.inspect
+    # |> IO.inspect
     |> tuple_xml_to_map
   end
 
@@ -25,7 +25,7 @@ defmodule FastXmlToMap do
   defp xml_to_tuple_by_list([child]) do
     case child do
       {:xmlcdata, cdata} -> :string.trim(cdata)
-      xmlel() -> xml_to_tuple(child)
+      xmlel() -> [xml_to_tuple(child)]
     end
   end
   defp xml_to_tuple_by_list(children) when is_list(children) do
@@ -48,6 +48,8 @@ defmodule FastXmlToMap do
     xml_list_tuple_to_map(an_list)
   end
 
+
+
   defp xml_list_tuple_to_map([]) do
     %{}
   end
@@ -56,7 +58,7 @@ defmodule FastXmlToMap do
       new_v = tuple_xml_to_map(v)
       case Map.get(acc, k) do
         nil -> Map.put(acc, k, new_v)
-        old when is_list(old) -> Map.put(acc, k, Enum.reverse([new_v| old])) 
+        old when is_list(old) -> Map.put(acc, k,  old ++ [new_v]) 
         old -> Map.put(acc, k, [old, new_v])
       end
     end)

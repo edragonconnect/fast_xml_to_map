@@ -1,13 +1,31 @@
 defmodule FastXmlToMapTest do
   use ExUnit.Case
 
+  test "one bar" do
+    assert FastXmlToMap.naive_map("<bar> </bar>")
+            ==
+            %{"bar" => %{}}
+  end
+
+  test "simple bar" do
+    assert FastXmlToMap.naive_map("<foo><bar>123</bar></foo>") 
+            == 
+          %{"foo" => %{"bar" => "123"}}
+  end
+
+  test "simple test" do
+    assert FastXmlToMap.naive_map("<foo><point><x>1</x><y>5</y></point><point><x>2</x><y>9</y></point></foo>")
+            ==
+          %{"foo" => %{"point" => [%{"x" => "1", "y" => "5"}, %{"x" => "2", "y" => "9"}]}}
+  end
+
   test "make a map" do
     assert FastXmlToMap.naive_map(sample_xml()) == expectation()
   end
 
-  # test "combines sibling nodes with the same name into a list" do
-  #   assert XmlToMap.naive_map(amazon_xml()) == amazon_expected()
-  # end
+  test "combines sibling nodes with the same name into a list" do
+    assert FastXmlToMap.naive_map(amazon_xml()) == amazon_expected()
+  end
 
   def expectation do
     %{"Orders" => %{
