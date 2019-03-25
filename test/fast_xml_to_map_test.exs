@@ -78,7 +78,6 @@ defmodule FastXmlToMapTest do
 
   def amazon_expected do
     %{"GetReportRequestListResponse" => %{
-      "xmlns" => "http://mws.amazonaws.com/doc/2009-01-01/",
       "GetReportRequestListResult" => %{"HasNext" => "true",
       "NextToken" => "bnKUjUwrpfD2jpZedg0wbVuY6vtoszFEs90MCUIyGQ/PkNXwVrATLSf6YzH8PQiWICyhlLgHd4gqVtOYt5i3YX/y5ZICxITwrMWltwHPross7S2LHmNKmcpVErfopfm7ZgI5YM+bbLFRPCnQrq7eGPqiUs2SoKaRPxuuVZAjoAG5Hd34Twm1igafEPREmauvQPEfQK/OReJ9wNJ/XIY3rAvjRfjTJJa5YKoSylcR8gttj983g7esDr0wZ3V0GwaZstMPcqxOnL//uIo+owquzirF36SWlaJ9J5zSS6le1iIsxqkIMXCWKNSOyeZZ1ics+UXSqjS0c15jmJnjJN2V5uMEDoXRsC9PFEVVZ6joTY2uGFVSjAf2NsFIcEAdr4xQz2Y051TPxxk=",
       "ReportRequestInfo" => [%{"CompletedDate" => "2016-11-18T20:53:14+00:00",

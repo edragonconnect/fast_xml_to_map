@@ -3,7 +3,8 @@ defmodule FastXmlToMap do
 
   Record.defrecord :xmlel, Record.extract(:xmlel, from_lib: "fast_xml/include/fxml.hrl")
 
-  def naive_map(data) do
+  def naive_map(xml) do
+    data = String.replace(xml, ~r/(\sxmlns="\S+")|(xmlns:ns2="\S+")/, "")
     pre_process = :fxml_stream.parse_element(data)
     xml_to_tuple(pre_process) 
     # |> IO.inspect
