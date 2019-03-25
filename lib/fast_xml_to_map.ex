@@ -11,14 +11,17 @@ defmodule FastXmlToMap do
   end
 
   defp xml_to_tuple(pre_process) do
-    xmlel(name: name, children: children) = pre_process
+    xmlel(name: name, attrs: attrs, children: children) = pre_process
     new_children = children |> Enum.filter(fn(ele) -> 
                         case ele do
                           {:xmlcdata, cdata} -> :string.trim(cdata) != "" 
                           _ -> true
                         end
                       end) 
-    {name, xml_to_tuple_by_list(new_children)}
+    case xml_to_tuple_by_list(new_children) do
+      res when is_binary(res) -> {name, res}
+      res when is_list(res) -> {name, attrs ++ res}
+    end
     # %{name => xml_to_tuple_by_list(new_children)}
   end
 
@@ -47,7 +50,6 @@ defmodule FastXmlToMap do
   defp tuple_xml_to_map(an_list) when is_list(an_list) do
     xml_list_tuple_to_map(an_list)
   end
-
 
 
   defp xml_list_tuple_to_map([]) do
