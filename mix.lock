@@ -1,0 +1,5 @@
+%{
+  "elixir_make": {:hex, :elixir_make, "0.5.2", "96a28c79f5b8d34879cd95ebc04d2a0d678cfbbd3e74c43cb63a76adf0ee8054", [:mix], [], "hexpm"},
+  "fast_xml": {:hex, :fast_xml, "1.1.35", "71bf779f1ba88f65fcc4fa693f745546843295c4c386a7acb818120b1742242e", [:rebar3], [{:p1_utils, "1.0.14", [hex: :p1_utils, repo: "hexpm", optional: false]}], "hexpm"},
+  "p1_utils": {:hex, :p1_utils, "1.0.14", "1f8176b02d787b858d099c1a2276c452ee2e4952766a13837dc93db3e1413a43", [:rebar3], [], "hexpm"},
+}
