@@ -9,6 +9,7 @@ defmodule FastXmlToMap.MixProject do
       start_permanent: Mix.env() == :prod,
       description: "Creates an Elixir Map data structure from an XML string",
       package: package(),
+      docs: docs(),
       deps: deps()
     ]
   end
@@ -30,7 +31,14 @@ defmodule FastXmlToMap.MixProject do
       links: %{"Github" => "https://github.com/edragonconnect/fast_xml_to_map.git"}
     ]
   end
-
+  
+  defp docs do
+    [main: "readme",
+     formatter_opts: [gfm: true],
+     extras: [
+       "README.md"
+     ]]
+  end
 
   # Run "mix help deps" to learn about dependencies.
   defp deps do
