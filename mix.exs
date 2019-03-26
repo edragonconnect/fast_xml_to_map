@@ -18,6 +18,16 @@ defmodule FastXmlToMap.MixProject do
     ]
   end
 
+  def package do
+    [
+      files: ["lib", "config", "test", "mix.exs", "README.md", "LICENSE"],
+      maintainers: ["Naupio Z.Y. Huang", "Xin Zou"],
+      licenses: ["MIT"],
+      links: %{"Github" => "https://github.com/edragonconnect/fast_xml_to_map.git"}
+    ]
+  end
+
+
   # Run "mix help deps" to learn about dependencies.
   defp deps do
     [
