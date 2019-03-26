@@ -5,9 +5,9 @@ defmodule FastXmlToMapTest do
     assert FastXmlToMap.naive_map("<bar> </bar>")
             ==
             %{"bar" => %{}}
-    assert FastXmlToMap.naive_map("<bar> </bar>")
+    assert %{"bar" => []}
             ==
-          FastXmlToMap.fast_naive_map("<bar> </bar>")
+          FastXmlToMap.fxml_map("<bar> </bar>")
   end
 
   test "simple bar" do
@@ -18,13 +18,9 @@ defmodule FastXmlToMapTest do
                                   """) 
             == 
           %{"foo" => %{"bar" => "123",  "a" => "b"}}
-    assert FastXmlToMap.naive_map("""
-                                <foo a="b">
-                                  <bar>123</bar>
-                                </foo>
-                                """)      
+    assert %{"foo" => [%{"a" => "b"}, %{"bar" => ["123"]}]}     
             == 
-          FastXmlToMap.fast_naive_map("""
+          FastXmlToMap.fxml_map("""
                                   <foo a="b">
                                     <bar>123</bar>
                                   </foo>
@@ -36,19 +32,19 @@ defmodule FastXmlToMapTest do
             ==
           %{"foo" => %{"point" => [%{"x" => "1", "y" => "5"}, %{"x" => "2", "y" => "9"}]}} 
   
-    assert FastXmlToMap.naive_map("<foo><point><x>1</x><y>5</y></point><point><x>2</x><y>9</y></point></foo>")
+    assert %{"foo" => [%{"point" => [%{"x" => ["1"]}, %{"y" => ["5"]}]}, %{"point" => [%{"x" => ["2"]}, %{"y" => ["9"]}]}]}
             ==
-           FastXmlToMap.fast_naive_map("<foo><point><x>1</x><y>5</y></point><point><x>2</x><y>9</y></point></foo>")
+           FastXmlToMap.fxml_map("<foo><point><x>1</x><y>5</y></point><point><x>2</x><y>9</y></point></foo>")
   end
 
   test "make a map" do
     assert FastXmlToMap.naive_map(sample_xml()) == expectation()
-    assert FastXmlToMap.naive_map(sample_xml()) == FastXmlToMap.fast_naive_map(sample_xml())
+    assert FastXmlToMap.naive_map(sample_xml()) == FastXmlToMap.naive_map_fxml(sample_xml())
   end
 
   test "combines sibling nodes with the same name into a list" do
     assert FastXmlToMap.naive_map(amazon_xml()) == amazon_expected()
-    assert FastXmlToMap.naive_map(amazon_xml()) == FastXmlToMap.fast_naive_map(amazon_xml())
+    assert FastXmlToMap.naive_map(amazon_xml()) == FastXmlToMap.naive_map_fxml(amazon_xml())
   end
 
   def expectation do

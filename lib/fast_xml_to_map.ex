@@ -1,4 +1,4 @@
-defmodule FastXmlToMap do
+  defmodule FastXmlToMap do
   require Record
 
   Record.defrecord :xmlel, Record.extract(:xmlel, from_lib: "fast_xml/include/fxml.hrl")
@@ -41,16 +41,50 @@ defmodule FastXmlToMap do
     list |> Enum.map(fn {k,v} -> {to_string(k), to_string(v)} end) |> Map.new
   end
 
+  ######################################################## 
+  ########################################################
+
+  def fxml_map(xml) do
+    # data = String.replace(xml, ~r/(\sxmlns="\S+")|(xmlns:ns2="\S+")/, "")
+    :fxml_stream.parse_element(xml) |> xml_to_map
+  end
+
+  def xml_to_map({:xmlcdata, cdata}) do
+    cdata
+  end
+  def xml_to_map(xmlel(name: name, attrs: attrs, children: children)) do
+    new_children = children |> Enum.filter(fn(ele) -> 
+                        case ele do
+                          {:xmlcdata, cdata} -> :string.trim(cdata) != "" 
+                          _ -> true
+                        end
+                      end) 
+    if attrs == [] do
+      %{name => xml_to_map_by_list(new_children)}
+    else  
+      %{name => [fast_attr_map(attrs)] ++ xml_to_map_by_list(new_children)}
+    end
+  end
+
+  def xml_to_map_by_list([]) do
+    []
+  end
+  def xml_to_map_by_list(data) when is_list(data) do
+    Enum.map(data, fn(ele) -> xml_to_map(ele) end)
+  end
+
+  defp fast_attr_map(list) do
+    list |> Map.new
+  end
 
 
   ######################################################## 
   ########################################################
 
-  def fast_naive_map(xml) do
+  def naive_map_fxml(xml) do
     data = String.replace(xml, ~r/(\sxmlns="\S+")|(xmlns:ns2="\S+")/, "")
-    pre_process = :fxml_stream.parse_element(data)
-    xml_to_tuple(pre_process) 
-    # |> IO.inspect
+    :fxml_stream.parse_element(data)
+    |> xml_to_tuple 
     |> tuple_xml_to_map
   end
 
@@ -66,7 +100,6 @@ defmodule FastXmlToMap do
       res when is_binary(res) -> {name, res}
       res when is_list(res) -> {name, attrs ++ res}
     end
-    # %{name => xml_to_tuple_by_list(new_children)}
   end
 
   defp xml_to_tuple_by_list([child]) do
