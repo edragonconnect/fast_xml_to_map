@@ -1,55 +1,5 @@
-defmodule FastXmlToMapTest do
-  use ExUnit.Case
 
-  test "one bar" do
-    assert FastXmlToMap.naive_map("<bar> </bar>")
-            ==
-            %{"bar" => %{}}
-    assert FastXmlToMap.naive_map("<bar> </bar>")
-            ==
-          FastXmlToMap.fast_naive_map("<bar> </bar>")
-  end
-
-  test "simple bar" do
-    assert FastXmlToMap.naive_map("""
-                                  <foo a="b">
-                                    <bar>123</bar>
-                                  </foo>
-                                  """) 
-            == 
-          %{"foo" => %{"bar" => "123",  "a" => "b"}}
-    assert FastXmlToMap.naive_map("""
-                                <foo a="b">
-                                  <bar>123</bar>
-                                </foo>
-                                """)      
-            == 
-          FastXmlToMap.fast_naive_map("""
-                                  <foo a="b">
-                                    <bar>123</bar>
-                                  </foo>
-                                  """) 
-  end
-
-  test "simple test" do
-    assert FastXmlToMap.naive_map("<foo><point><x>1</x><y>5</y></point><point><x>2</x><y>9</y></point></foo>")
-            ==
-          %{"foo" => %{"point" => [%{"x" => "1", "y" => "5"}, %{"x" => "2", "y" => "9"}]}} 
-  
-    assert FastXmlToMap.naive_map("<foo><point><x>1</x><y>5</y></point><point><x>2</x><y>9</y></point></foo>")
-            ==
-           FastXmlToMap.fast_naive_map("<foo><point><x>1</x><y>5</y></point><point><x>2</x><y>9</y></point></foo>")
-  end
-
-  test "make a map" do
-    assert FastXmlToMap.naive_map(sample_xml()) == expectation()
-    assert FastXmlToMap.naive_map(sample_xml()) == FastXmlToMap.fast_naive_map(sample_xml())
-  end
-
-  test "combines sibling nodes with the same name into a list" do
-    assert FastXmlToMap.naive_map(amazon_xml()) == amazon_expected()
-    assert FastXmlToMap.naive_map(amazon_xml()) == FastXmlToMap.fast_naive_map(amazon_xml())
-  end
+defmodule XmlData do
 
   def expectation do
     %{"Orders" => %{"foo" => "bar",
@@ -61,8 +11,8 @@ defmodule FastXmlToMapTest do
        "items" => %{"item" => %{"description" => "Hat", "price" => "5.99",
            "quantity" => "2", "sku" => "ABC"}}}]}}
   end
-
-
+  
+  
   def sample_xml do
   """
     <Orders foo="bar">
@@ -95,10 +45,9 @@ defmodule FastXmlToMapTest do
     </Orders>
   """
   end
-
+  
   def amazon_expected do
-    %{"GetReportRequestListResponse" => %{
-      "GetReportRequestListResult" => %{"HasNext" => "true",
+    %{"GetReportRequestListResponse" => %{"GetReportRequestListResult" => %{"HasNext" => "true",
       "NextToken" => "bnKUjUwrpfD2jpZedg0wbVuY6vtoszFEs90MCUIyGQ/PkNXwVrATLSf6YzH8PQiWICyhlLgHd4gqVtOYt5i3YX/y5ZICxITwrMWltwHPross7S2LHmNKmcpVErfopfm7ZgI5YM+bbLFRPCnQrq7eGPqiUs2SoKaRPxuuVZAjoAG5Hd34Twm1igafEPREmauvQPEfQK/OReJ9wNJ/XIY3rAvjRfjTJJa5YKoSylcR8gttj983g7esDr0wZ3V0GwaZstMPcqxOnL//uIo+owquzirF36SWlaJ9J5zSS6le1iIsxqkIMXCWKNSOyeZZ1ics+UXSqjS0c15jmJnjJN2V5uMEDoXRsC9PFEVVZ6joTY2uGFVSjAf2NsFIcEAdr4xQz2Y051TPxxk=",
       "ReportRequestInfo" => [%{"CompletedDate" => "2016-11-18T20:53:14+00:00",
          "EndDate" => "2016-11-18T20:53:00+00:00",
@@ -192,8 +141,8 @@ defmodule FastXmlToMapTest do
          "SubmittedDate" => "2016-11-17T20:54:33+00:00"}]},
     "ResponseMetadata" => %{"RequestId" => "7509cdb2-0b69-4ca0-89dc-c77f8a747834"}}}
   end
-
-
+  
+  
   def amazon_xml do
   """
   <?xml version="1.0"?>
@@ -328,4 +277,5 @@ defmodule FastXmlToMapTest do
   </GetReportRequestListResponse>
   """
   end
-end
+  
+  end

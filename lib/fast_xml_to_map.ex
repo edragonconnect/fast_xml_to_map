@@ -4,6 +4,49 @@ defmodule FastXmlToMap do
   Record.defrecord :xmlel, Record.extract(:xmlel, from_lib: "fast_xml/include/fxml.hrl")
 
   def naive_map(xml) do
+    xml = String.replace(xml, ~r/(\sxmlns="\S+")|(xmlns:ns2="\S+")/, "")
+    {:ok, tuples, _} = :erlsom.simple_form(xml)
+    FastXmlToMap.parse(tuples)
+  end
+
+  def parse([value]) do
+    case is_tuple(value) do
+      true -> parse(value)
+      false -> to_string(value) |> String.trim
+    end
+  end
+
+  def parse({name, attr, content}) do
+    parsed_content = parse(content)
+    case is_map(parsed_content) do
+      true -> 
+        %{to_string(name) => parsed_content |> Map.merge(attr_map(attr))}
+      false ->
+        %{to_string(name) => parsed_content}
+    end
+  end
+
+  def parse(list) when is_list(list) do
+    parsed_list = Enum.map list, &({to_string(elem(&1,0)), parse(&1)}) 
+    Enum.reduce parsed_list, %{}, fn {k,v}, acc -> 
+      case Map.get(acc, k) do
+        nil -> Map.put_new(acc, k, v[k])
+        [h|t] -> Map.put(acc, k, [h|t] ++ [v[k]])
+        prev -> Map.put(acc, k, [prev] ++ [v[k]])
+      end
+    end 
+  end
+
+  defp attr_map(list) do
+    list |> Enum.map(fn {k,v} -> {to_string(k), to_string(v)} end) |> Map.new
+  end
+
+
+
+  ######################################################## 
+  ########################################################
+
+  def fast_naive_map(xml) do
     data = String.replace(xml, ~r/(\sxmlns="\S+")|(xmlns:ns2="\S+")/, "")
     pre_process = :fxml_stream.parse_element(data)
     xml_to_tuple(pre_process) 
