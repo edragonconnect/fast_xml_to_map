@@ -15,12 +15,6 @@ iex(3)> FastXmlToMap.fxml_map("<foo><bar>123</bar></foo>")
 %{"foo" => [%{"bar" => ["123"]}]}
 ```
 
-Converts xml string to an Elixir map with strings for keys.
-
-This tool is inspired by Rails Hash.from_xml() but is "naive" in that it is convenient (requires no setup) but carries the same drawbacks. Use with caution.
-
-XML and Maps are non-isomorphic.  Attributes on some nodes don't carry over if the node has just one text value (like a leaf). Naive map has no validation over what should be a collection.  If and only if nodes are repeated at the same level will they beome a list.  
-
 ```elixir
 Erlang/OTP 21 [erts-10.3] [source] [64-bit] [smp:4:4] [ds:4:4:10] [async-threads:1] [hipe]
 
@@ -38,16 +32,11 @@ iex(3)> FastXmlToMap.fxml_map("<foo><point><x>1</x><y>5</y></point><point><x>2</
 }
 ```
 
-Depends on Erlsom to parse xml then converts the 'simple_form' structure into a map.
-
-I prefer Erlsom because it is the best documented erlang xml parser and because it mentions that it does not produce new atoms during the scanning.
-
-See tests for example usage.
+**FastXmlToMap.naive_map** api depends on **Erlsom** to parse xml then converts the return data into a map.
+**FastXmlToMap.naive_map_fxml** and **FastXmlToMap.fxml_map** apis depends on **fast_xml** to pasrse xml then converts the return data into a map.
 
 
 ## Installation
-
-If [available in Hex](https://hex.pm/docs/publish), the package can be installed as:
 
 Add `fast_xml_to_map` to your list of dependencies in `mix.exs`:
 
@@ -63,7 +52,12 @@ def deps do
   [{:fast_xml_to_map, git: "https://github.com/edragonconnect/fast_xml_to_map.git", branch: "master"}]
 end
 ```
-    
+
+## LICENSE  
+
+[The MIT License (MIT)](./LICENSE)  
+Copyright (c) 2019 [eDragonConnect Team](https://github.com/edragonconnect/)
+  
 ## Benchmark
 ```
 ============================================================
